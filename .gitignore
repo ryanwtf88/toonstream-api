@@ -1,30 +1,11 @@
-# Dependencies
-node_modules/
-bun.lockb
-
-# Environment
+node_modules
 .env
 .env.local
-
-# Logs
-logs/
+logs
 *.log
-npm-debug.log*
-
-# Cache
-.cache/
-*.cache
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
+.cache
+.vercel
+dist
+build
 .DS_Store
-Thumbs.db
-
-# Build
-dist/
-build/
+bun.lockb

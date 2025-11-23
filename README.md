@@ -1,6 +1,8 @@
 # ToonStream API
 
-A comprehensive RESTful API for scraping anime content from [toonstream.love](https://toonstream.love). Built with Bun.js and Hono framework, following the architecture of [hianime-api](https://github.com/ryanwtf88/hianime-api).
+A comprehensive RESTful API for scraping anime content from [toonstream.love](https://toonstream.love). Built with Hono framework and native Fetch API, optimized for serverless deployment.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ryanwtf88/toonstream-api)
 
 ## Features
 
@@ -13,51 +15,33 @@ A comprehensive RESTful API for scraping anime content from [toonstream.love](ht
 - ⚡ **Fast & Cached** - Built-in caching for optimal performance
 - 🛡️ **Rate Limited** - Protection against abuse
 - 📖 **API Documentation** - Interactive Swagger UI
+- ☁️ **Serverless Ready** - Optimized for Vercel deployment
 
-## Table of Contents
+## Quick Start
 
-- [Installation](#installation)
-- [API Endpoints](#api-endpoints)
-- [Usage Examples](#usage-examples)
-- [Deployment](#deployment)
-- [Development](#development)
+### Deploy to Vercel (Recommended)
 
-## Installation
-
-### Prerequisites
-
-Make sure you have [Bun.js](https://bun.sh) installed on your system.
+Click the button above or:
 
 ```bash
-curl -fsSL https://bun.sh/install | bash
+vercel deploy
 ```
 
-### Local Setup
+### Local Development
 
-1. **Clone the repository**
-
-```bash
-git clone <your-repo-url>
-cd toonstream-api
-```
-
-2. **Install dependencies**
+1. **Install dependencies**
 
 ```bash
+npm install
+# or
 bun install
 ```
 
-3. **Configure environment** (optional)
-
-Copy `.env.example` to `.env` and adjust settings:
+2. **Start development server**
 
 ```bash
-cp .env.example .env
-```
-
-4. **Start the development server**
-
-```bash
+npm run dev
+# or
 bun run dev
 ```
 
@@ -65,192 +49,48 @@ The server will be running at `http://localhost:3030`
 
 ## API Endpoints
 
-### 1. GET Home Page
+### Base URL
+- **Production**: `https://your-app.vercel.app`
+- **Local**: `http://localhost:3030`
 
-Retrieve homepage data including latest series, movies, and schedule.
+### Endpoints
 
-```
-GET /api/v1/home
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "latestSeries": [...],
-    "latestMovies": [...],
-    "randomSeries": [...],
-    "randomMovies": [...],
-    "schedule": {...}
-  }
-}
-```
-
-### 2. GET Search
-
-Search for anime/series by keyword.
-
-```
-GET /api/v1/search?keyword={query}&page={page}
-```
-
-**Parameters:**
-- `keyword` (required) - Search query
-- `page` (optional) - Page number (default: 1)
-
-**Example:**
-```bash
-curl "http://localhost:3030/api/v1/search?keyword=hunter&page=1"
-```
-
-### 3. GET Search Suggestions
-
-Get quick search suggestions.
-
-```
-GET /api/v1/search/suggestions?keyword={query}
-```
-
-### 4. GET Anime Details
-
-Retrieve detailed information about a specific anime.
-
-```
-GET /api/v1/anime/{id}
-```
-
-**Example:**
-```bash
-curl "http://localhost:3030/api/v1/anime/hunter-x-hunter-hindi-dub"
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "id": "hunter-x-hunter-hindi-dub",
-  "title": "Hunter x Hunter Hindi Dub",
-  "poster": "...",
-  "description": "...",
-  "rating": 8.6,
-  "genres": ["Action & Adventure", "Animation"],
-  "languages": ["Hindi", "English", "Japanese"],
-  "totalEpisodes": 148,
-  "seasons": {...}
-}
-```
-
-### 5. GET Episode Streaming
-
-Get episode details and streaming links.
-
-```
-GET /api/v1/episode/{episodeId}
-```
-
-**Example:**
-```bash
-curl "http://localhost:3030/api/v1/episode/hunter-x-hunter-hindi-dub-1x1"
-```
-
-### 6. GET Episode Server
-
-Get streaming link from specific server.
-
-```
-GET /api/v1/episode/{episodeId}/servers/{serverId}
-```
-
-### 7. GET Categories
-
-Get all available categories.
-
-```
-GET /api/v1/categories
-```
-
-### 8. GET Category
-
-Get anime by category with pagination.
-
-```
-GET /api/v1/category/{name}?page={page}
-```
-
-**Example:**
-```bash
-curl "http://localhost:3030/api/v1/category/action-adventure?page=1"
-```
-
-### 9. GET By Language
-
-Filter anime by language.
-
-```
-GET /api/v1/category/language/{lang}?page={page}
-```
-
-**Supported languages:** `hindi`, `tamil`, `telugu`, `english`
-
-**Example:**
-```bash
-curl "http://localhost:3030/api/v1/category/language/hindi?page=1"
-```
-
-### 10. GET Movies
-
-Get anime movies.
-
-```
-GET /api/v1/category/type/movies?page={page}
-```
-
-### 11. GET Series
-
-Get anime series.
-
-```
-GET /api/v1/category/type/series?page={page}
-```
-
-### 12. GET Schedule
-
-Get weekly anime release schedule.
-
-```
-GET /api/v1/schedule
-```
-
-### 13. GET Day Schedule
-
-Get schedule for specific day.
-
-```
-GET /api/v1/schedule/{day}
-```
-
-**Valid days:** `monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`
+| Endpoint | Method | Description | Example |
+|----------|--------|-------------|---------|
+| `/` | GET | API information | - |
+| `/api/home` | GET | Homepage data | - |
+| `/api/search` | GET | Search anime | `?keyword=naruto&page=1` |
+| `/api/search/suggestions` | GET | Search suggestions | `?keyword=one` |
+| `/api/anime/:id` | GET | Anime details | `/api/anime/bleach-dub` |
+| `/api/episode/:id` | GET | Episode streaming | `/api/episode/bleach-dub-2x1` |
+| `/api/episode/:id/servers/:serverId` | GET | Server-specific link | - |
+| `/api/categories` | GET | All categories | - |
+| `/api/category/:name` | GET | Category anime | `?page=1` |
+| `/api/category/language/:lang` | GET | By language | `/language/hindi` |
+| `/api/category/type/movies` | GET | Movies | - |
+| `/api/category/type/series` | GET | Series | - |
+| `/api/schedule` | GET | Weekly schedule | - |
+| `/api/schedule/:day` | GET | Day schedule | `/schedule/monday` |
 
 ## Usage Examples
 
-### JavaScript/Node.js
+### JavaScript/TypeScript
 
 ```javascript
-// Get home page data
-const response = await fetch('http://localhost:3030/api/v1/home');
-const data = await response.json();
-console.log(data);
-
 // Search for anime
-const searchResponse = await fetch('http://localhost:3030/api/v1/search?keyword=naruto&page=1');
-const searchData = await searchResponse.json();
-console.log(searchData.results);
+const response = await fetch('https://your-app.vercel.app/api/search?keyword=naruto');
+const data = await response.json();
+console.log(data.results);
 
 // Get anime details
-const animeResponse = await fetch('http://localhost:3030/api/v1/anime/hunter-x-hunter-hindi-dub');
-const animeData = await animeResponse.json();
-console.log(animeData);
+const anime = await fetch('https://your-app.vercel.app/api/anime/bleach-dub');
+const details = await anime.json();
+console.log(details.totalEpisodes); // 40
+
+// Get episode streaming
+const episode = await fetch('https://your-app.vercel.app/api/episode/bleach-dub-2x1');
+const streaming = await episode.json();
+console.log(streaming.sources); // Array of streaming URLs
 ```
 
 ### Python
@@ -258,141 +98,212 @@ console.log(animeData);
 ```python
 import requests
 
-# Get home page data
-response = requests.get('http://localhost:3030/api/v1/home')
-data = response.json()
-print(data)
+# Search
+response = requests.get('https://your-app.vercel.app/api/search', 
+                       params={'keyword': 'naruto'})
+print(response.json())
 
-# Search for anime
-search_response = requests.get('http://localhost:3030/api/v1/search', params={
-    'keyword': 'naruto',
-    'page': 1
-})
-search_data = search_response.json()
-print(search_data['results'])
+# Get anime
+anime = requests.get('https://your-app.vercel.app/api/anime/bleach-dub')
+print(anime.json()['totalEpisodes'])
+```
+
+### cURL
+
+```bash
+# Home page
+curl https://your-app.vercel.app/api/home
+
+# Search
+curl "https://your-app.vercel.app/api/search?keyword=bleach"
+
+# Anime details
+curl https://your-app.vercel.app/api/anime/hunter-x-hunter-hindi-dub
+
+# Episode streaming
+curl https://your-app.vercel.app/api/episode/hunter-x-hunter-hindi-dub-1x17
+```
+
+## Response Examples
+
+### Search Response
+
+```json
+{
+  "success": true,
+  "keyword": "bleach",
+  "results": [
+    {
+      "id": "bleach-dub",
+      "title": "Bleach Dub",
+      "url": "https://toonstream.love/series/bleach-dub/",
+      "poster": "https://image.tmdb.org/t/p/w500/vdWSv1yyqQLz9POkbUyKEmAkJOM.jpg",
+      "type": "Series"
+    }
+  ],
+  "pagination": {
+    "currentPage": 1,
+    "totalPages": 1,
+    "hasNextPage": false
+  }
+}
+```
+
+### Anime Details Response
+
+```json
+{
+  "success": true,
+  "id": "bleach-dub",
+  "title": "Bleach Dub",
+  "poster": "https://image.tmdb.org/t/p/w185/vdWSv1yyqQLz9POkbUyKEmAkJOM.jpg",
+  "description": "For as long as he can remember...",
+  "genres": ["Action & Adventure", "Animation", "Sci-Fi & Fantasy"],
+  "languages": ["Hindi", "Tamil", "Telugu", "English", "Japanese"],
+  "totalEpisodes": 40,
+  "seasons": {
+    "season2": [...]
+  }
+}
+```
+
+### Episode Streaming Response
+
+```json
+{
+  "success": true,
+  "episodeId": "bleach-dub-2x1",
+  "title": "Bleach Dub 2x1",
+  "season": 2,
+  "episode": 1,
+  "sources": [
+    {
+      "type": "iframe",
+      "url": "https://toonstream.love/?trembed=0&trid=33881&trtype=2",
+      "quality": "default"
+    }
+  ],
+  "languages": ["Hindi", "Tamil", "Telugu", "English", "Japanese"]
+}
+```
+
+## Configuration
+
+The API uses `config.js` for configuration:
+
+```javascript
+export default {
+  port: 3030,
+  baseUrl: 'https://toonstream.love',
+  cacheTTL: 3600,
+  rateLimit: {
+    windowMs: 60000,
+    maxRequests: 100
+  }
+};
 ```
 
 ## Deployment
 
-### Docker Deployment
+### Vercel (Recommended)
 
-1. **Build the Docker image**
+1. Fork this repository
+2. Import to Vercel
+3. Deploy!
+
+Or use Vercel CLI:
+
+```bash
+npm i -g vercel
+vercel
+```
+
+### Docker
 
 ```bash
 docker build -t toonstream-api .
+docker run -p 3030:3030 toonstream-api
 ```
 
-2. **Run the container**
+### Other Platforms
 
-```bash
-docker run -p 3030:3030 -e PORT=3030 toonstream-api
-```
+- **Render**: Set build command to `npm install` and start command to `npm start`
+- **Railway**: One-click deployment
+- **Fly.io**: Global edge deployment
 
-### Render Deployment
-
-1. Create a new Web Service on [Render](https://render.com)
-2. Connect your repository
-3. Set build command: `bun install`
-4. Set start command: `bun start`
-5. Deploy!
-
-### Vercel Deployment
-
-This API can be deployed to Vercel with minimal configuration. Create a `vercel.json`:
-
-```json
-{
-  "version": 2,
-  "builds": [
-    {
-      "src": "index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "index.js"
-    }
-  ]
-}
-```
-
-## Development
-
-### Running in Development Mode
-
-```bash
-bun run dev
-```
-
-This will start the server with hot-reload enabled.
-
-### Running in Production Mode
-
-```bash
-bun start
-```
-
-### Project Structure
+## Project Structure
 
 ```
 toonstream-api/
+├── config.js              # Configuration
+├── index.js               # Main application
+├── vercel.json           # Vercel configuration
 ├── src/
-│   ├── routes/          # API route handlers
+│   ├── routes/           # API route handlers
 │   │   ├── home.js
 │   │   ├── search.js
 │   │   ├── anime.js
 │   │   ├── episodes.js
 │   │   ├── categories.js
 │   │   └── schedule.js
-│   ├── scrapers/        # Web scrapers
+│   ├── scrapers/         # Web scrapers
 │   │   ├── home.js
 │   │   ├── search.js
 │   │   ├── anime.js
 │   │   ├── streaming.js
 │   │   ├── categories.js
 │   │   └── schedule.js
-│   └── utils/           # Utility functions
-│       ├── scraper.js
-│       └── cache.js
-├── index.js             # Main application
+│   └── utils/
+│       ├── scraper.js    # Scraping utilities
+│       └── cache.js      # Caching system
 ├── package.json
-└── .env.example
+└── README.md
 ```
 
-## Environment Variables
+## Technologies
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | Server port | `3030` |
-| `BASE_URL` | ToonStream base URL | `https://toonstream.love` |
-| `CACHE_TTL` | Cache time-to-live (seconds) | `3600` |
-| `RATE_LIMIT_WINDOW` | Rate limit window (ms) | `60000` |
-| `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | `100` |
+- **Runtime**: Node.js 18+ / Bun.js
+- **Framework**: [Hono](https://hono.dev) - Fast web framework
+- **Scraping**: [Cheerio](https://cheerio.js.org) - HTML parsing
+- **HTTP**: Native Fetch API
+- **Caching**: node-cache
+- **Documentation**: Swagger UI
 
-## API Documentation
+## Performance
 
-Interactive API documentation is available at:
+- ⚡ Fast response times with caching
+- 🔄 30-minute cache for home page
+- 🔄 1-hour cache for anime details
+- 🔄 10-minute cache for search results
+- 🚀 Optimized for serverless environments
 
-```
-http://localhost:3030/docs
-```
+## Rate Limiting
+
+- 100 requests per minute per IP
+- Configurable via `config.js`
 
 ## Important Notice
 
 > **⚠️ Disclaimer**: This API is for educational purposes only. Web scraping may violate the website's Terms of Service. Use responsibly and at your own risk.
 
+## API Documentation
+
+Interactive API documentation is available at `/docs` when running the server.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
 ## License
 
 MIT
 
-## Acknowledgments
-
-- Inspired by [hianime-api](https://github.com/ryanwtf88/hianime-api)
-- Built with [Bun.js](https://bun.sh) and [Hono](https://hono.dev)
-- Scraping powered by [Cheerio](https://cheerio.js.org)
-
 ## Support
 
 For issues and questions, please open an issue on GitHub.
+
+## Acknowledgments
+
+- Inspired by [hianime-api](https://github.com/ryanwtf88/hianime-api)
+- Built with [Hono](https://hono.dev)
+- Scraping powered by [Cheerio](https://cheerio.js.org)

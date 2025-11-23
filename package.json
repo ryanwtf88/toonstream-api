@@ -5,6 +5,9 @@
   "module": "index.js",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=18.x"
+  },
   "scripts": {
     "dev": "bun --watch index.js",
     "start": "bun index.js",
