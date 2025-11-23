@@ -1,73 +1,105 @@
+<div align="center">
+
 # ToonStream API
 
-A comprehensive RESTful API for scraping anime content from [toonstream.love](https://toonstream.love). Built with Hono framework and Bun.js runtime.
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Bun](https://img.shields.io/badge/Bun-1.0+-black?logo=bun)](https://bun.sh)
+[![Hono](https://img.shields.io/badge/Hono-4.0+-orange?logo=hono)](https://hono.dev)
+[![Deploy](https://img.shields.io/badge/Deploy-Pterodactyl-blue?logo=pterodactyl)](./PTERODACTYL.md)
+[![GitHub Stars](https://img.shields.io/github/stars/ryanwtf88/toonstream-api?style=social)](https://github.com/ryanwtf88/toonstream-api)
 
-[![Deploy on Pterodactyl](https://img.shields.io/badge/Deploy-Pterodactyl-blue)](./PTERODACTYL.md)
+**A comprehensive RESTful API for scraping anime content from toonstream.love**
+
+[Features](#features) • [Installation](#installation) • [API Endpoints](#api-endpoints) • [Documentation](#documentation) • [Deployment](#deployment)
+
+</div>
+
+---
 
 ## Features
 
-- 🎬 **Home Page Data** - Latest series, movies, and schedules
-- 🔍 **Search** - Search anime with pagination and suggestions
-- 📺 **Anime Details** - Comprehensive anime information with episodes
-- 🎥 **Streaming Links** - Extract video sources and download links
-- 🗂️ **Categories** - Browse by genre, language, type
-- 📅 **Schedule** - Weekly anime release schedule
-- ⚡ **Fast & Cached** - Built-in caching for optimal performance
-- 🛡️ **Rate Limited** - Protection against abuse
-- 📖 **API Documentation** - Interactive Swagger UI
-- 🚀 **Pterodactyl Ready** - Optimized for panel deployment
+<table>
+<tr>
+<td width="50%">
 
-## Quick Start
+### Core Functionality
+- **Home Page Data** - Latest series, movies, and schedules
+- **Search Engine** - Full-text search with pagination
+- **Anime Details** - Comprehensive information and metadata
+- **Episode Streaming** - Extract video sources and links
+- **Category Browsing** - Filter by genre, language, type
+- **Release Schedule** - Weekly anime release calendar
 
-### Pterodactyl Deployment (Recommended)
+</td>
+<td width="50%">
 
-See [PTERODACTYL.md](./PTERODACTYL.md) for complete deployment guide.
+### Technical Features
+- **High Performance** - Built-in caching system
+- **Rate Limiting** - Request throttling protection
+- **Error Handling** - Comprehensive error responses
+- **API Documentation** - Interactive Swagger UI
+- **Cloudflare Bypass** - Axios + cookie jar support
+- **Production Ready** - Optimized for deployment
 
-**Quick Steps:**
-1. Import `egg.json` to your Pterodactyl panel
-2. Create new server with ToonStream API egg
-3. Start and access at `http://your-ip:3030`
+</td>
+</tr>
+</table>
 
-### Local Development
+---
 
-1. **Install dependencies**
+## Installation
+
+### Prerequisites
+
+![Bun](https://img.shields.io/badge/Bun-1.0+-black?logo=bun&logoColor=white)
+![Node](https://img.shields.io/badge/Node.js-18+-green?logo=node.js&logoColor=white)
+![Git](https://img.shields.io/badge/Git-Required-red?logo=git&logoColor=white)
+
+### Quick Start
 
 ```bash
+# Clone repository
+git clone https://github.com/ryanwtf88/toonstream-api.git
+cd toonstream-api
+
+# Install dependencies
 bun install
-```
 
-2. **Start development server**
-
-```bash
+# Start development server
 bun run dev
 ```
 
 The server will be running at `http://localhost:3030`
 
+---
+
 ## API Endpoints
 
 ### Base URL
-- **Production**: `https://your-app.vercel.app`
-- **Local**: `http://localhost:3030`
+```
+http://localhost:3030
+```
 
-### Endpoints
+### Available Endpoints
 
-| Endpoint | Method | Description | Example |
-|----------|--------|-------------|---------|
+| Endpoint | Method | Description | Parameters |
+|----------|--------|-------------|------------|
 | `/` | GET | API information | - |
 | `/api/home` | GET | Homepage data | - |
-| `/api/search` | GET | Search anime | `?keyword=naruto&page=1` |
-| `/api/search/suggestions` | GET | Search suggestions | `?keyword=one` |
-| `/api/anime/:id` | GET | Anime details | `/api/anime/bleach-dub` |
-| `/api/episode/:id` | GET | Episode streaming | `/api/episode/bleach-dub-2x1` |
-| `/api/episode/:id/servers/:serverId` | GET | Server-specific link | - |
+| `/api/search` | GET | Search anime | `keyword`, `page` |
+| `/api/search/suggestions` | GET | Search suggestions | `keyword` |
+| `/api/anime/:id` | GET | Anime details | `id` |
+| `/api/episode/:id` | GET | Episode streaming | `id` |
+| `/api/episode/:id/servers/:serverId` | GET | Server-specific links | `id`, `serverId` |
 | `/api/categories` | GET | All categories | - |
-| `/api/category/:name` | GET | Category anime | `?page=1` |
-| `/api/category/language/:lang` | GET | By language | `/language/hindi` |
-| `/api/category/type/movies` | GET | Movies | - |
-| `/api/category/type/series` | GET | Series | - |
+| `/api/category/:name` | GET | Category anime | `name`, `page` |
+| `/api/category/language/:lang` | GET | Filter by language | `lang` |
+| `/api/category/type/movies` | GET | Movies list | - |
+| `/api/category/type/series` | GET | Series list | - |
 | `/api/schedule` | GET | Weekly schedule | - |
-| `/api/schedule/:day` | GET | Day schedule | `/schedule/monday` |
+| `/api/schedule/:day` | GET | Day schedule | `day` |
+
+---
 
 ## Usage Examples
 
@@ -75,19 +107,19 @@ The server will be running at `http://localhost:3030`
 
 ```javascript
 // Search for anime
-const response = await fetch('https://your-app.vercel.app/api/search?keyword=naruto');
+const response = await fetch('http://localhost:3030/api/search?keyword=naruto');
 const data = await response.json();
 console.log(data.results);
 
 // Get anime details
-const anime = await fetch('https://your-app.vercel.app/api/anime/bleach-dub');
+const anime = await fetch('http://localhost:3030/api/anime/bleach-dub');
 const details = await anime.json();
-console.log(details.totalEpisodes); // 40
+console.log(details);
 
 // Get episode streaming
-const episode = await fetch('https://your-app.vercel.app/api/episode/bleach-dub-2x1');
+const episode = await fetch('http://localhost:3030/api/episode/bleach-dub-2x1');
 const streaming = await episode.json();
-console.log(streaming.sources); // Array of streaming URLs
+console.log(streaming.sources);
 ```
 
 ### Python
@@ -96,146 +128,137 @@ console.log(streaming.sources); // Array of streaming URLs
 import requests
 
 # Search
-response = requests.get('https://your-app.vercel.app/api/search', 
+response = requests.get('http://localhost:3030/api/search', 
                        params={'keyword': 'naruto'})
 print(response.json())
 
-# Get anime
-anime = requests.get('https://your-app.vercel.app/api/anime/bleach-dub')
-print(anime.json()['totalEpisodes'])
+# Get anime details
+anime = requests.get('http://localhost:3030/api/anime/bleach-dub')
+print(anime.json())
 ```
 
 ### cURL
 
 ```bash
 # Home page
-curl https://your-app.vercel.app/api/home
+curl http://localhost:3030/api/home
 
 # Search
-curl "https://your-app.vercel.app/api/search?keyword=bleach"
+curl "http://localhost:3030/api/search?keyword=bleach"
 
 # Anime details
-curl https://your-app.vercel.app/api/anime/hunter-x-hunter-hindi-dub
+curl http://localhost:3030/api/anime/hunter-x-hunter-hindi-dub
 
 # Episode streaming
-curl https://your-app.vercel.app/api/episode/hunter-x-hunter-hindi-dub-1x17
+curl http://localhost:3030/api/episode/hunter-x-hunter-hindi-dub-1x17
 ```
 
-## Response Examples
+---
 
-### Search Response
+## Response Format
+
+### Success Response
 
 ```json
 {
   "success": true,
-  "keyword": "bleach",
-  "results": [
-    {
-      "id": "bleach-dub",
-      "title": "Bleach Dub",
-      "url": "https://toonstream.love/series/bleach-dub/",
-      "poster": "https://image.tmdb.org/t/p/w500/vdWSv1yyqQLz9POkbUyKEmAkJOM.jpg",
-      "type": "Series"
-    }
-  ],
-  "pagination": {
-    "currentPage": 1,
-    "totalPages": 1,
-    "hasNextPage": false
+  "data": {
+    "id": "bleach-dub",
+    "title": "Bleach Dub",
+    "poster": "https://image.tmdb.org/t/p/w500/...",
+    "description": "...",
+    "genres": ["Action", "Adventure"],
+    "totalEpisodes": 40
   }
 }
 ```
 
-### Anime Details Response
+### Error Response
 
 ```json
 {
-  "success": true,
-  "id": "bleach-dub",
-  "title": "Bleach Dub",
-  "poster": "https://image.tmdb.org/t/p/w185/vdWSv1yyqQLz9POkbUyKEmAkJOM.jpg",
-  "description": "For as long as he can remember...",
-  "genres": ["Action & Adventure", "Animation", "Sci-Fi & Fantasy"],
-  "languages": ["Hindi", "Tamil", "Telugu", "English", "Japanese"],
-  "totalEpisodes": 40,
-  "seasons": {
-    "season2": [...]
-  }
+  "success": false,
+  "error": "Error message",
+  "message": "Detailed error description"
 }
 ```
 
-### Episode Streaming Response
-
-```json
-{
-  "success": true,
-  "episodeId": "bleach-dub-2x1",
-  "title": "Bleach Dub 2x1",
-  "season": 2,
-  "episode": 1,
-  "sources": [
-    {
-      "type": "iframe",
-      "url": "https://toonstream.love/?trembed=0&trid=33881&trtype=2",
-      "quality": "default"
-    }
-  ],
-  "languages": ["Hindi", "Tamil", "Telugu", "English", "Japanese"]
-}
-```
+---
 
 ## Configuration
 
-The API uses `config.js` for configuration:
+Edit `config.js` to customize settings:
 
 ```javascript
 export default {
-  port: 3030,
+  port: 3030,                    // Server port
   baseUrl: 'https://toonstream.love',
-  cacheTTL: 3600,
+  cacheTTL: 3600,               // Cache duration (seconds)
   rateLimit: {
-    windowMs: 60000,
-    maxRequests: 100
+    windowMs: 60000,            // Rate limit window (ms)
+    maxRequests: 100            // Max requests per window
   }
 };
 ```
 
+---
+
 ## Deployment
 
-### Vercel (Recommended)
+### Pterodactyl Panel
 
-1. Fork this repository
-2. Import to Vercel
-3. Deploy!
+[![Deploy on Pterodactyl](https://img.shields.io/badge/Deploy-Pterodactyl-blue?logo=pterodactyl&logoColor=white)](./PTERODACTYL.md)
 
-Or use Vercel CLI:
+See [PTERODACTYL.md](./PTERODACTYL.md) for complete deployment guide.
 
-```bash
-npm i -g vercel
-vercel
-```
+**Quick Steps:**
+1. Import `egg.json` to your Pterodactyl panel
+2. Create new server with ToonStream API egg
+3. Start and access at `http://your-ip:3030`
 
 ### Docker
 
 ```bash
+# Build image
 docker build -t toonstream-api .
+
+# Run container
 docker run -p 3030:3030 toonstream-api
 ```
 
-### Other Platforms
+### Manual Deployment
 
-- **Render**: Set build command to `npm install` and start command to `npm start`
-- **Railway**: One-click deployment
-- **Fly.io**: Global edge deployment
+```bash
+# Install dependencies
+bun install
+
+# Start production server
+bun run start
+```
+
+---
+
+## Documentation
+
+### Interactive API Docs
+
+Access Swagger UI at: `http://localhost:3030/docs`
+
+### OpenAPI Specification
+
+Available at: `http://localhost:3030/api/openapi.json`
+
+---
 
 ## Project Structure
 
 ```
 toonstream-api/
 ├── config.js              # Configuration
-├── index.js               # Main application
-├── vercel.json           # Vercel configuration
+├── index.js               # Entry point
+├── egg.json              # Pterodactyl egg
 ├── src/
+│   ├── app.js            # Main application
 │   ├── routes/           # API route handlers
 │   │   ├── home.js
 │   │   ├── search.js
@@ -257,50 +280,124 @@ toonstream-api/
 └── README.md
 ```
 
-## Technologies
+---
 
-- **Runtime**: Node.js 18+ / Bun.js
-- **Framework**: [Hono](https://hono.dev) - Fast web framework
-- **Scraping**: [Cheerio](https://cheerio.js.org) - HTML parsing
-- **HTTP**: Native Fetch API
-- **Caching**: node-cache
-- **Documentation**: Swagger UI
+## Technology Stack
+
+| Technology | Purpose |
+|------------|---------|
+| ![Bun](https://img.shields.io/badge/Bun-black?logo=bun&logoColor=white) | Runtime |
+| ![Hono](https://img.shields.io/badge/Hono-orange?logo=hono&logoColor=white) | Web Framework |
+| ![Axios](https://img.shields.io/badge/Axios-5A29E4?logo=axios&logoColor=white) | HTTP Client |
+| ![Cheerio](https://img.shields.io/badge/Cheerio-E88C00?logoColor=white) | HTML Parsing |
+| Node-Cache | In-Memory Caching |
+| Hono Rate Limiter | Request Throttling |
+
+---
 
 ## Performance
 
-- ⚡ Fast response times with caching
-- 🔄 30-minute cache for home page
-- 🔄 1-hour cache for anime details
-- 🔄 10-minute cache for search results
-- 🚀 Optimized for serverless environments
+| Metric | Value |
+|--------|-------|
+| Response Time | ~100-500ms (cached) |
+| Memory Usage | ~200-400MB |
+| CPU Usage | < 10% (idle) |
+| Cache Duration | 30min-1hr |
+| Rate Limit | 100 req/min |
 
-## Rate Limiting
+---
 
-- 100 requests per minute per IP
-- Configurable via `config.js`
+## Development
 
-## Important Notice
+### Available Scripts
 
-> **⚠️ Disclaimer**: This API is for educational purposes only. Web scraping may violate the website's Terms of Service. Use responsibly and at your own risk.
+```bash
+# Development mode (auto-reload)
+bun run dev
 
-## API Documentation
+# Production mode
+bun run start
 
-Interactive API documentation is available at `/docs` when running the server.
+# Install dependencies
+bun install
+```
+
+### Environment
+
+No environment variables required. All configuration is in `config.js`.
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**Port Already in Use**
+```bash
+# Change port in config.js
+port: 3031  // or any available port
+```
+
+**403 Forbidden Errors**
+- Check if toonstream.love is accessible
+- Verify your IP isn't blocked by Cloudflare
+- Try different server location
+
+**High Memory Usage**
+- Reduce `cacheTTL` in config.js
+- Restart server periodically
+- Increase allocated RAM
+
+---
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
 ## License
 
-MIT
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Disclaimer
+
+> **Warning**: This API is for educational purposes only. Web scraping may violate the website's Terms of Service. Use responsibly and at your own risk.
+
+---
 
 ## Support
 
-For issues and questions, please open an issue on GitHub.
+- **Issues**: [GitHub Issues](https://github.com/ryanwtf88/toonstream-api/issues)
+- **Documentation**: Available at `/docs` endpoint
+- **Deployment Guide**: [PTERODACTYL.md](./PTERODACTYL.md)
+
+---
 
 ## Acknowledgments
 
 - Inspired by [hianime-api](https://github.com/ryanwtf88/hianime-api)
 - Built with [Hono](https://hono.dev)
-- Scraping powered by [Cheerio](https://cheerio.js.org)
+- Powered by [Bun.js](https://bun.sh)
+- Scraping with [Cheerio](https://cheerio.js.org)
+
+---
+
+<div align="center">
+
+**Made with ❤️ for the anime community**
+
+[![GitHub](https://img.shields.io/badge/GitHub-ryanwtf88-black?logo=github)](https://github.com/ryanwtf88)
+[![Stars](https://img.shields.io/github/stars/ryanwtf88/toonstream-api?style=social)](https://github.com/ryanwtf88/toonstream-api)
+
+</div>
