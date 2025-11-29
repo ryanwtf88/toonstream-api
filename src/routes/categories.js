@@ -4,7 +4,11 @@ import {
     scrapeCategories,
     scrapeByLanguage,
     scrapeMovies,
-    scrapeSeries
+    scrapeSeries,
+    scrapeLatestMovies,
+    scrapeLatestSeries,
+    scrapeRandomMovie,
+    scrapeRandomSeries
 } from '../scrapers/categories.js';
 
 const categories = new Hono();
@@ -117,3 +121,73 @@ categories.get('/type/series', async (c) => {
 });
 
 export default categories;
+
+/**
+ * GET /api/category/latest/movies?page={page}
+ * Get latest anime movies
+ */
+categories.get('/latest/movies', async (c) => {
+    try {
+        const page = parseInt(c.req.query('page')) || 1;
+        const data = await scrapeLatestMovies(page);
+        return c.json(data);
+    } catch (error) {
+        console.error('Latest movies route error:', error.message);
+        return c.json({
+            success: false,
+            error: error.message
+        }, 500);
+    }
+});
+
+/**
+ * GET /api/category/latest/series?page={page}
+ * Get latest anime series
+ */
+categories.get('/latest/series', async (c) => {
+    try {
+        const page = parseInt(c.req.query('page')) || 1;
+        const data = await scrapeLatestSeries(page);
+        return c.json(data);
+    } catch (error) {
+        console.error('Latest series route error:', error.message);
+        return c.json({
+            success: false,
+            error: error.message
+        }, 500);
+    }
+});
+
+/**
+ * GET /api/category/random/movie
+ * Get random anime movie
+ */
+categories.get('/random/movie', async (c) => {
+    try {
+        const data = await scrapeRandomMovie();
+        return c.json(data);
+    } catch (error) {
+        console.error('Random movie route error:', error.message);
+        return c.json({
+            success: false,
+            error: error.message
+        }, 500);
+    }
+});
+
+/**
+ * GET /api/category/random/series
+ * Get random anime series
+ */
+categories.get('/random/series', async (c) => {
+    try {
+        const data = await scrapeRandomSeries();
+        return c.json(data);
+    } catch (error) {
+        console.error('Random series route error:', error.message);
+        return c.json({
+            success: false,
+            error: error.message
+        }, 500);
+    }
+});

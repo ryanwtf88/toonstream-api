@@ -1,11 +1,52 @@
-import NodeCache from 'node-cache';
 import config from '../../config.js';
 
+// Simple in-memory cache for Workers
+// Replaces node-cache which uses global timers (forbidden in Workers)
+class SimpleCache {
+    constructor(options = {}) {
+        this.cache = new Map();
+        this.stdTTL = options.stdTTL || 0;
+    }
+
+    get(key) {
+        const item = this.cache.get(key);
+        if (!item) return undefined;
+        if (item.expiry && item.expiry < Date.now()) {
+            this.cache.delete(key);
+            return undefined;
+        }
+        return item.value;
+    }
+
+    set(key, value, ttl) {
+        const timeToLive = ttl || this.stdTTL;
+        const expiry = timeToLive > 0 ? Date.now() + (timeToLive * 1000) : null;
+        this.cache.set(key, { value, expiry });
+        return true;
+    }
+
+    del(key) {
+        return this.cache.delete(key) ? 1 : 0;
+    }
+
+    flushAll() {
+        this.cache.clear();
+    }
+
+    getStats() {
+        return {
+            keys: this.cache.size,
+            hits: 0,
+            misses: 0,
+            ksize: 0,
+            vsize: 0
+        };
+    }
+}
+
 // Initialize cache with TTL from config
-const cache = new NodeCache({
-    stdTTL: config.cacheTTL,
-    checkperiod: 600,
-    useClones: false
+const cache = new SimpleCache({
+    stdTTL: config.cacheTTL
 });
 
 /**

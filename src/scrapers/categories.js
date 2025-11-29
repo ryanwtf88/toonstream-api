@@ -96,6 +96,12 @@ export const scrapeCategories = async () => {
             }
         });
 
+        // If no categories found, use fallback
+        if (categories.length === 0) {
+            console.log('Using fallback genres');
+            categories.push(...FALLBACK_GENRES);
+        }
+
         const data = {
             success: true,
             categories
@@ -158,10 +164,106 @@ export const scrapeSeries = async (page = 1) => {
     return await scrapeCategory('anime-series', page);
 };
 
+/**
+ * Scrape latest movies
+ * @param {number} page - Page number
+ * @returns {Promise<object>} Latest movies data
+ */
+export const scrapeLatestMovies = async (page = 1) => {
+    // Usually the default category sort is by date/latest
+    return await scrapeCategory('anime-movies', page);
+};
+
+/**
+ * Scrape latest series
+ * @param {number} page - Page number
+ * @returns {Promise<object>} Latest series data
+ */
+export const scrapeLatestSeries = async (page = 1) => {
+    // Usually the default category sort is by date/latest
+    return await scrapeCategory('anime-series', page);
+};
+
+/**
+ * Scrape random anime from a category
+ * @param {string} category - Category slug
+ * @returns {Promise<object>} Random anime data
+ */
+export const scrapeRandom = async (category) => {
+    try {
+        // 1. Get first page to find total pages
+        const firstPage = await scrapeCategory(category, 1);
+        const totalPages = firstPage.pagination.totalPages || 1;
+
+        // 2. Pick a random page (cap at 50 to be safe/fast)
+        const maxPage = Math.min(totalPages, 50);
+        const randomPage = Math.floor(Math.random() * maxPage) + 1;
+
+        // 3. Fetch random page (if not 1)
+        let pageData = firstPage;
+        if (randomPage !== 1) {
+            pageData = await scrapeCategory(category, randomPage);
+        }
+
+        // 4. Pick random anime
+        const animes = pageData.animes;
+        if (animes.length === 0) {
+            throw new Error('No anime found');
+        }
+
+        const randomAnime = animes[Math.floor(Math.random() * animes.length)];
+        return {
+            success: true,
+            ...randomAnime
+        };
+    } catch (error) {
+        console.error('Error scraping random:', error.message);
+        throw new Error(`Failed to scrape random anime: ${error.message}`);
+    }
+};
+
+/**
+ * Scrape random movie
+ * @returns {Promise<object>} Random movie data
+ */
+export const scrapeRandomMovie = async () => {
+    return await scrapeRandom('anime-movies');
+};
+
+/**
+ * Scrape random series
+ * @returns {Promise<object>} Random series data
+ */
+export const scrapeRandomSeries = async () => {
+    return await scrapeRandom('anime-series');
+};
+
+// Fallback genres list
+const FALLBACK_GENRES = [
+    { slug: 'action', name: 'Action', url: '/category/action/' },
+    { slug: 'adventure', name: 'Adventure', url: '/category/adventure/' },
+    { slug: 'comedy', name: 'Comedy', url: '/category/comedy/' },
+    { slug: 'drama', name: 'Drama', url: '/category/drama/' },
+    { slug: 'fantasy', name: 'Fantasy', url: '/category/fantasy/' },
+    { slug: 'horror', name: 'Horror', url: '/category/horror/' },
+    { slug: 'mystery', name: 'Mystery', url: '/category/mystery/' },
+    { slug: 'romance', name: 'Romance', url: '/category/romance/' },
+    { slug: 'sci-fi', name: 'Sci-Fi', url: '/category/sci-fi/' },
+    { slug: 'slice-of-life', name: 'Slice of Life', url: '/category/slice-of-life/' },
+    { slug: 'sports', name: 'Sports', url: '/category/sports/' },
+    { slug: 'thriller', name: 'Thriller', url: '/category/thriller/' },
+    { slug: 'supernatural', name: 'Supernatural', url: '/category/supernatural/' }
+];
+
 export default {
     scrapeCategory,
     scrapeCategories,
     scrapeByLanguage,
     scrapeMovies,
-    scrapeSeries
+    scrapeSeries,
+    scrapeLatestMovies,
+    scrapeLatestSeries,
+    scrapeRandomMovie,
+    scrapeRandomSeries,
+    FALLBACK_GENRES
 };

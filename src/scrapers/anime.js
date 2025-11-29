@@ -100,6 +100,15 @@ export const scrapeAnimeDetails = async (id) => {
             }
         });
 
+        // Extract related content
+        const related = [];
+        $('.related-posts article, .related-movies article, .related article, [class*="related"] article').each((_, el) => {
+            const anime = extractAnimeCard($(el), $);
+            if (anime && anime.id) {
+                related.push(anime);
+            }
+        });
+
         // Extract episodes by season
         const seasons = {};
         let allEpisodes = [];
@@ -167,7 +176,8 @@ export const scrapeAnimeDetails = async (id) => {
             languages,
             cast,
             totalEpisodes: allEpisodes.length,
-            seasons
+            seasons,
+            related
         };
 
         setCache(cacheKey, data, 3600); // Cache for 1 hour

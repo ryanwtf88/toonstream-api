@@ -42,7 +42,7 @@ export const scrapeSchedule = async () => {
                     if (anime && anime.id) {
                         schedule[day].push({
                             ...anime,
-                            releaseTime: time
+                            releaseTime: normalizeTime(time)
                         });
                     }
                 });
@@ -98,3 +98,18 @@ export const scrapeDaySchedule = async (day) => {
 };
 
 export default { scrapeSchedule, scrapeDaySchedule };
+
+/**
+ * Normalize time string
+ * @param {string} time - Raw time string
+ * @returns {string|null} Normalized time
+ */
+function normalizeTime(time) {
+    if (!time) return null;
+    // Remove extra spaces and common prefixes
+    let clean = time.replace(/at\s+/i, '').trim();
+
+    // Ensure consistent format (e.g., "HH:mm AM/PM")
+    // This is a basic cleanup, can be expanded based on actual site format
+    return clean;
+}
